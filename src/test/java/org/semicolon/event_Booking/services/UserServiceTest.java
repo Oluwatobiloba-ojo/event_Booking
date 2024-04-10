@@ -17,7 +17,7 @@ class UserServiceTest {
     public void testCreateAccount(){
         CreateAccountRequest request = new CreateAccountRequest();
         request.setName("user");
-        request.setEmail("test@email.com");
+        request.setMail("test@email.com");
         request.setPassword("password");
         CreateAccountResponse response = userService.createAccount(request);
         assertThat(response).isNotNull();
