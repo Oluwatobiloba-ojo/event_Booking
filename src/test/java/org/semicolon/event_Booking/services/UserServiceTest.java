@@ -22,5 +22,6 @@ class UserServiceTest {
         CreateAccountResponse response = userService.createAccount(request);
         assertThat(response).isNotNull();
     }
+    
 
 }

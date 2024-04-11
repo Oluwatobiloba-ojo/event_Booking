@@ -6,6 +6,7 @@ import org.semicolon.event_Booking.data.model.User;
 import org.semicolon.event_Booking.data.repository.UserRepository;
 import org.semicolon.event_Booking.dtos.request.CreateAccountRequest;
 import org.semicolon.event_Booking.dtos.response.CreateAccountResponse;
+import org.semicolon.event_Booking.exception.UserDoesNotExistException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,4 +23,11 @@ public class UserServiceImpl implements UserService{
         response.setMessage(String.format("%s account has been created with this identification %d", savedUser.getName(), savedUser.getId()));
         return response;
     }
+
+    @Override
+    public User findBy(Long ownerId) throws UserDoesNotExistException {
+       return repository.findById(ownerId)
+               .orElseThrow(() -> new UserDoesNotExistException("User does not exist"));
+    }
+
 }
