@@ -5,8 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookEventResponse {
+public class CancelEventResponse {
     private String message;
-    private String tickedId;
-    private Long userId;
 }

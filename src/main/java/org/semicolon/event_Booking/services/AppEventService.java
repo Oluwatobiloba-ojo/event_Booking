@@ -8,16 +8,15 @@ import org.semicolon.event_Booking.data.model.User;
 import org.semicolon.event_Booking.data.repository.EventRepository;
 import org.semicolon.event_Booking.dtos.request.BookEventRequest;
 import org.semicolon.event_Booking.dtos.request.CreateEventRequest;
-import org.semicolon.event_Booking.dtos.response.BookEventResponse;
-import org.semicolon.event_Booking.dtos.response.CreateEventResponse;
-import org.semicolon.event_Booking.dtos.response.EventResponse;
-import org.semicolon.event_Booking.dtos.response.TicketResponse;
+import org.semicolon.event_Booking.dtos.response.*;
 import org.semicolon.event_Booking.exception.InvalidDateFormatException;
 import org.semicolon.event_Booking.exception.InvalidEventException;
+import org.semicolon.event_Booking.exception.TicketExistException;
 import org.semicolon.event_Booking.exception.UserDoesNotExistException;
 import org.semicolon.event_Booking.util.Validation;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.semicolon.event_Booking.exception.GlobalException.*;
@@ -29,6 +28,7 @@ public class AppEventService implements EventService{
     private ModelMapper modelMapper;
     private EventRepository repository;
     private TicketService ticketService;
+    private final Long TICKET_NUMBER = 1L;
 
     @Override
     public CreateEventResponse createEvent(CreateEventRequest request) throws UserDoesNotExistException, InvalidDateFormatException {
@@ -44,17 +44,19 @@ public class AppEventService implements EventService{
     }
 
     @Override
-    public BookEventResponse bookEvent(BookEventRequest request) throws InvalidEventException {
-        Optional<Event> optionalEvent = repository.findById(request.getEventId());
-        if (optionalEvent.isEmpty()) throw new InvalidEventException(INVALID_EVENT);
-        Event event = optionalEvent.get();
+    public BookEventResponse bookEvent(BookEventRequest request) throws InvalidEventException, UserDoesNotExistException {
+        User user = userService.findBy(request.getUserId());
+        Event event = findEvent(request.getEventId());
         if (event.getAvailableAttendeesCount().equals(0L)) throw new InvalidEventException(EVENT_OUT_OF_BOUND);
-        TicketResponse ticketResponse = ticketService.createTicket(event, request);
-        Long TICKET_NUMBER = 1L;
-        event.setAvailableAttendeesCount(event.getAvailableAttendeesCount()- TICKET_NUMBER);
+        TicketResponse ticketResponse = ticketService.createTicket(event, user.getId());
+        event.setAvailableAttendeesCount(event.getAvailableAttendeesCount() - TICKET_NUMBER);
         repository.save(event);
+        return generateResponse(request, ticketResponse);
+    }
+
+    private static BookEventResponse generateResponse(BookEventRequest request, TicketResponse ticketResponse) {
         BookEventResponse response = new BookEventResponse();
-        response.setEmail(request.getUserEmail());
+        response.setUserId(request.getUserId());
         response.setTickedId(ticketResponse.getTickedId());
         response.setMessage(SUCCESSFUL_BOOKING_EVENT);
         return response;
@@ -64,6 +66,31 @@ public class AppEventService implements EventService{
     public EventResponse findEventBy(Long id) throws InvalidEventException {
         return repository.findById(id)
                 .map(event -> modelMapper.map(event, EventResponse.class))
+                .orElseThrow(() -> new InvalidEventException(INVALID_EVENT));
+    }
+
+    @Override
+    public CancelEventResponse cancelBookedEvent(Long eventId, String tickedId) throws InvalidEventException, TicketExistException {
+        Event event = findEvent(eventId);
+        ticketService.cancelTicket(tickedId);
+        event.setAvailableAttendeesCount(event.getAvailableAttendeesCount()+TICKET_NUMBER);
+        repository.save(event);
+        CancelEventResponse response = new CancelEventResponse();
+        response.setMessage("Ticket booked for "+ event.getName() + " has been deleted");
+        return response;
+    }
+
+    @Override
+    public List<EventResponse> findAllEventAvailable() {
+        return repository.findAll()
+                         .stream()
+                         .filter(event -> event.getAvailableAttendeesCount() > 0)
+                         .map(event -> modelMapper.map(event, EventResponse.class))
+                         .toList();
+    }
+
+    private Event findEvent(Long eventId) throws InvalidEventException {
+        return repository.findById(eventId)
                 .orElseThrow(() -> new InvalidEventException(INVALID_EVENT));
     }
 }

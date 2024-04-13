@@ -16,9 +16,7 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = UUID)
     private String id;
-    private String userEmail;
-    private String userLastName;
-    private String userFirstName;
+    private Long userId;
     @ManyToOne
     private Event event;
 }

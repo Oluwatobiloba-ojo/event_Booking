@@ -1,13 +1,16 @@
 package org.semicolon.event_Booking.dtos.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookEventRequest {
-    private String userFirstName;
-    private String userLastName;
     private Long eventId;
-    private String userEmail;
+    private Long userId;
+
 }

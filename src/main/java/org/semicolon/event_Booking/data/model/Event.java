@@ -19,6 +19,6 @@ public class Event {
     private String date;
     @Enumerated(EnumType.STRING)
     private Category category;
-    @OneToOne
+    @ManyToOne
     private User user;
 }
