@@ -7,10 +7,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
-public class BookEventResponse{
-    private String message;
-    private String tickedId;
-    private Long userId;
+@NoArgsConstructor
+public class ApiResponse{
+    private Object data;
+    private boolean isSuccessful;
 }

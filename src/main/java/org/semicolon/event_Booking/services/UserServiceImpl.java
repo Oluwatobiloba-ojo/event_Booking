@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CreateAccountResponse createAccount(CreateAccountRequest request) {
+
         User newUser = modelMapper.map(request, User.class);
         User savedUser = repository.save(newUser);
         CreateAccountResponse response = new CreateAccountResponse();
