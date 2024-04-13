@@ -1,9 +1,12 @@
 package org.semicolon.event_Booking.services;
 
 import org.junit.jupiter.api.Test;
+import org.semicolon.event_Booking.dtos.request.BookEventRequest;
 import org.semicolon.event_Booking.dtos.request.CreateEventRequest;
+import org.semicolon.event_Booking.dtos.response.BookEventResponse;
 import org.semicolon.event_Booking.dtos.response.CreateEventResponse;
 import org.semicolon.event_Booking.exception.InvalidDateFormatException;
+import org.semicolon.event_Booking.exception.InvalidEventException;
 import org.semicolon.event_Booking.exception.UserDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +22,7 @@ class EventServiceTest {
     private EventService eventService;
     @Test
     @Sql(scripts = "/scripts/insert.sql")
-    public void testThatEventCanBeCreated() throws UserDoesNotExistException {
+    public void testThatEventCanBeCreated() throws UserDoesNotExistException, InvalidDateFormatException {
         CreateEventRequest request = new CreateEventRequest();
         request.setName("Event");
         request.setDate("2004-03-31");
@@ -44,6 +47,24 @@ class EventServiceTest {
         request.setOwnerId(200L);
         assertThrows(InvalidDateFormatException.class, () -> eventService.createEvent(request));
     }
+
+    @Test
+    @Sql(scripts = "/scripts/insert.sql")
+    public void testBookingEvent() throws InvalidEventException {
+        Long eventAttendeeCount = eventService.findEventBy(201L).getAvailableAttendeesCount();
+        BookEventRequest request = new BookEventRequest();
+        request.setEventId(201L);
+        request.setUserFirstName("firstName");
+        request.setUserLastName("lastName");
+        request.setUserEmail("test@email.com");
+        BookEventResponse response = eventService.bookEvent(request);
+        assertThat(response).isNotNull();
+        assertThat(eventService.findEventBy(201L).getAvailableAttendeesCount()).isEqualTo(eventAttendeeCount - 1);
+    }
+
+    
+
+
 
 
 
