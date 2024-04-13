@@ -1,6 +1,5 @@
 package org.semicolon.event_Booking.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -16,8 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,10 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EventControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ModelMapper modelMapper;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    private ModelMapper modelMapper = new ModelMapper();
-
-    private ObjectMapper mapper = new ObjectMapper();
     @Test
     @Sql(scripts = "/scripts/insert.sql")
     public void testCreateEvent() throws Exception {
@@ -71,11 +68,30 @@ class EventControllerTest {
                 .andDo(result -> {
                     ApiResponse eventResponse = mapper.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
                     BookEventResponse response = modelMapper.map(eventResponse.getData(), BookEventResponse.class);
-                    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/user/event/remove/" + response.getTickedId() + "/?eventId=" + 202)
-                                    .contentType(MediaType.APPLICATION_JSON))
+                    mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/user/event/remove/" + response.getTickedId())
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .param("eventId", "202"))
                             .andExpect(status().is2xxSuccessful())
                             .andDo(print());
                 });
+    }
+
+    @Test
+    @Sql(scripts = "/scripts/insert.sql")
+    public void testGetAllEvent() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user/event/events")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+    }
+
+    @Test
+    @Sql(scripts = "/scripts/insert.sql")
+    public void testGetAllBookedEventOfAUser() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user/event/tickets/"+200)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
     }
 
 

@@ -16,3 +16,4 @@ INSERT INTO EVENT(id, name, available_attendees_count, event_Description, date, 
 INSERT INTO EVENT(id, name, available_attendees_count, event_Description, date, category, user_id) VALUES
  (203, "Event2", 0, "Description", "1998-03-21", "Game", 201);
 
+
