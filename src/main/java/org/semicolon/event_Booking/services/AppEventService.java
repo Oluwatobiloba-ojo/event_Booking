@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 
-import static org.semicolon.event_Booking.exception.GlobalException.*;
+import static org.semicolon.event_Booking.util.AppUtils.*;
 
 @Service
 @AllArgsConstructor

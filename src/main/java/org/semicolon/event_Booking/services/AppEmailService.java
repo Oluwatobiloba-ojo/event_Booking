@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static org.semicolon.event_Booking.exception.GlobalException.MESSAGE_REMAINDER_CONTENT;
+import static org.semicolon.event_Booking.util.AppUtils.MESSAGE_REMAINDER_CONTENT;
 
 @Service
 public class AppEmailService implements EmailService{

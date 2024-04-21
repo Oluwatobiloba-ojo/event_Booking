@@ -1,6 +1,6 @@
-package org.semicolon.event_Booking.exception;
+package org.semicolon.event_Booking.util;
 
-public class GlobalException {
+public class AppUtils {
 
     public static final String INVALID_DATE = "%s Invalid date format yyyy-mm-dd";
     public static final String INVALID_EVENT = "Event does not exist";

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.semicolon.event_Booking.exception.GlobalException.INVALID_TICKET;
+import static org.semicolon.event_Booking.util.AppUtils.INVALID_TICKET;
 
 @Service
 @AllArgsConstructor
