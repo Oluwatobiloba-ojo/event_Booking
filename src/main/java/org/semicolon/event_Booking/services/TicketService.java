@@ -2,6 +2,7 @@ package org.semicolon.event_Booking.services;
 
 import org.semicolon.event_Booking.data.model.Event;
 import org.semicolon.event_Booking.data.model.Ticket;
+import org.semicolon.event_Booking.data.model.User;
 import org.semicolon.event_Booking.dtos.response.BookedTicketResponse;
 import org.semicolon.event_Booking.dtos.response.CancelTicketResponse;
 import org.semicolon.event_Booking.dtos.response.TicketResponse;
@@ -11,12 +12,14 @@ import java.util.List;
 
 public interface TicketService {
 
-    TicketResponse createTicket(Event event, Long request);
+    TicketResponse createTicket(Event event, User user);
 
     List<BookedTicketResponse> getAllTicketFor(Long userId);
 
     CancelTicketResponse cancelTicket(String tickedId) throws TicketExistException;
 
     Ticket findTicketBy(String ticketId) throws TicketExistException;
+
+    List<Ticket> findTickets(Event event);
 
 }

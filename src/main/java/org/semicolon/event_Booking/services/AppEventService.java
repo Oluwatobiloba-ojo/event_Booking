@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.semicolon.event_Booking.data.model.Category;
 import org.semicolon.event_Booking.data.model.Event;
+import org.semicolon.event_Booking.data.model.Ticket;
 import org.semicolon.event_Booking.data.model.User;
 import org.semicolon.event_Booking.data.repository.EventRepository;
 import org.semicolon.event_Booking.dtos.request.BookEventRequest;
@@ -16,8 +17,9 @@ import org.semicolon.event_Booking.exception.UserDoesNotExistException;
 import org.semicolon.event_Booking.util.Validation;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.semicolon.event_Booking.exception.GlobalException.*;
 
@@ -48,7 +50,7 @@ public class AppEventService implements EventService{
         User user = userService.findBy(request.getUserId());
         Event event = findEvent(request.getEventId());
         if (event.getAvailableAttendeesCount().equals(0L)) throw new InvalidEventException(EVENT_OUT_OF_BOUND);
-        TicketResponse ticketResponse = ticketService.createTicket(event, user.getId());
+        TicketResponse ticketResponse = ticketService.createTicket(event, user);
         event.setAvailableAttendeesCount(event.getAvailableAttendeesCount() - TICKET_NUMBER);
         repository.save(event);
         return generateResponse(request, ticketResponse);
@@ -89,8 +91,27 @@ public class AppEventService implements EventService{
                          .toList();
     }
 
+    @Override
+    public List<Event> findAllEventOccuringNextDay() {
+        return repository.findAll().stream()
+                .filter(event -> {
+                    LocalDate eventDate = LocalDate.of(LocalDate.now().getYear(),
+                            LocalDate.now().getMonthValue(),
+                            LocalDate.now().getDayOfMonth()+1);
+                    LocalDate date = LocalDate.of(eventDate.getYear(), eventDate.getMonthValue(), eventDate.getDayOfMonth());
+                    System.out.println(eventDate.isAfter(ChronoLocalDate.from(date)));
+                    return eventDate.equals(date) && !findAllTicketFor(event).isEmpty();
+                }).toList();
+    }
+
+    @Override
+    public List<Ticket> findAllTicketFor(Event event) {
+        return ticketService.findTickets(event);
+    }
+
     private Event findEvent(Long eventId) throws InvalidEventException {
         return repository.findById(eventId)
                 .orElseThrow(() -> new InvalidEventException(INVALID_EVENT));
     }
+
 }

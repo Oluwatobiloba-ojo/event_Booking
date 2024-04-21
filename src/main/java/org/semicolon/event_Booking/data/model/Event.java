@@ -3,12 +3,14 @@ package org.semicolon.event_Booking.data.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Getter
 @Setter
 @Entity
+@ToString
 public class Event {
     @Id
     @GeneratedValue(strategy = IDENTITY)

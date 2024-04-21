@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.semicolon.event_Booking.data.model.Event;
 import org.semicolon.event_Booking.data.model.Ticket;
+import org.semicolon.event_Booking.data.model.User;
 import org.semicolon.event_Booking.data.repository.TicketRepository;
 import org.semicolon.event_Booking.dtos.response.BookedTicketResponse;
 import org.semicolon.event_Booking.dtos.response.CancelTicketResponse;
@@ -22,10 +23,12 @@ public class AppTicketService implements TicketService{
     private TicketRepository repository;
 
     @Override
-    public TicketResponse createTicket(Event event, Long userId) {
+    public TicketResponse createTicket(Event event, User user) {
         Ticket ticket = new Ticket();
-        ticket.setUserId(userId);
+        ticket.setUserId(user.getId());
+        ticket.setEmail(user.getEmail());
         ticket.setEvent(event);
+        ticket.setName(user.getName());
         repository.save(ticket);
         TicketResponse response = new TicketResponse();
         response.setTickedId(ticket.getId());
@@ -54,5 +57,10 @@ public class AppTicketService implements TicketService{
     public Ticket findTicketBy(String ticketId) throws TicketExistException {
         return repository.findById(ticketId)
                 .orElseThrow(() -> new TicketExistException(INVALID_TICKET));
+    }
+
+    @Override
+    public List<Ticket> findTickets(Event event) {
+        return repository.findAllByEvent(event);
     }
 }

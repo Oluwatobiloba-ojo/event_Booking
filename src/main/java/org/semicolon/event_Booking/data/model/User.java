@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -11,11 +12,14 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+
 public class User {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    private String mail;
+    private String email;
     private String password;
+
 }

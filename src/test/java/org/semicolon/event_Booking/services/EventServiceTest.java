@@ -33,7 +33,7 @@ class EventServiceTest {
     public void testThatEventCanBeCreated() throws UserDoesNotExistException, InvalidDateFormatException {
         CreateEventRequest request = new CreateEventRequest();
         request.setName("Event");
-        request.setDate("2004-03-31");
+        request.setDate("2004-03-20");
         request.setAvailableAttendeesCount(100L);
         request.setCategory("Concert");
         request.setEventDescription("This is an event");
