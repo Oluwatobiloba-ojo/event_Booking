@@ -25,7 +25,6 @@ public class Schedule {
 
     @Scheduled(cron = "0 55 10 ? * *")
     public void sendRemainder() {
-        System.out.println("entered oooooo");
         eventService.findAllEventOccuringNextDay()
                 .forEach(event -> {
                     SendMailRequest request = new SendMailRequest();

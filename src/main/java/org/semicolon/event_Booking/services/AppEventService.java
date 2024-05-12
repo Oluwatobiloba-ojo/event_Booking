@@ -18,7 +18,6 @@ import org.semicolon.event_Booking.util.Validation;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 
 import static org.semicolon.event_Booking.util.AppUtils.*;
@@ -99,7 +98,6 @@ public class AppEventService implements EventService{
                             LocalDate.now().getMonthValue(),
                             LocalDate.now().getDayOfMonth()+1);
                     LocalDate date = LocalDate.of(eventDate.getYear(), eventDate.getMonthValue(), eventDate.getDayOfMonth());
-                    System.out.println(eventDate.isAfter(ChronoLocalDate.from(date)));
                     return eventDate.equals(date) && !findAllTicketFor(event).isEmpty();
                 }).toList();
     }
